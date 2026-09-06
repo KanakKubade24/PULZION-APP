@@ -1,0 +1,6 @@
+{
+  "name": "Pulzion '26 - Beyond The Earth",
+  "description": "Official Pulzion '26 Beyond The Earth tech fest portal with mission registrations, slide-in dossiers, cyber gallery, mission partners portal, and coordinator contacts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,433 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Oxanium:wght@300;400;500;600;700;800&family=Black+Ops+One&family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rubik+Glitch&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=VT323&display=swap');
+@import url('https://db.onlinewebfonts.com/c/5aaa42a48e05e854d909101d081fde60?family=Unison+Pro+Bold');
+@import url('https://db.onlinewebfonts.com/c/571f8bd755d29dc071ead59896f6c4ec?family=Blender+Pro+Heavy');
+
+@theme {
+  --font-audiowide: 'Audiowide', cursive, sans-serif;
+  --font-title: 'Audiowide', cursive, sans-serif;
+  --font-orbitron: 'Audiowide', cursive, sans-serif;
+  --font-pulzion: 'Audiowide', cursive, sans-serif;
+  --font-beyond-earth: 'Audiowide', cursive, sans-serif;
+  --font-oxanium: 'Oxanium', sans-serif;
+  --font-content: 'Oxanium', sans-serif;
+  --font-body: 'Oxanium', sans-serif;
+}
+
+@font-face {
+  font-family: 'Audiowide';
+  src: url('/fonts/Audiowide.woff2') format('woff2'),
+       url('/fonts/Audiowide-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Oxanium';
+  src: url('/fonts/Oxanium.woff2') format('woff2'),
+       url('/fonts/Oxanium.ttf') format('truetype');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unison Pro Bold';
+  src: url('/fonts/UnisonProBold.ttf') format('truetype'),
+       url('https://db.onlinewebfonts.com/t/5aaa42a48e05e854d909101d081fde60.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/5aaa42a48e05e854d909101d081fde60.woff') format('woff'),
+       url('https://db.onlinewebfonts.com/t/5aaa42a48e05e854d909101d081fde60.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unison Pro';
+  src: url('/fonts/UnisonProBold.ttf') format('truetype'),
+       url('https://db.onlinewebfonts.com/t/5aaa42a48e05e854d909101d081fde60.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/5aaa42a48e05e854d909101d081fde60.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Super Sliced';
+  src: url('/fonts/SuperSliced.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Super Sliced Italic';
+  src: url('/fonts/SuperSliced-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Blender Pro Heavy';
+  src: url('https://db.onlinewebfonts.com/t/571f8bd755d29dc071ead59896f6c4ec.eot');
+  src: url('https://db.onlinewebfonts.com/t/571f8bd755d29dc071ead59896f6c4ec.eot?#iefix') format('embedded-opentype'),
+       url('https://db.onlinewebfonts.com/t/571f8bd755d29dc071ead59896f6c4ec.woff2') format('woff2'),
+       url('https://db.onlinewebfonts.com/t/571f8bd755d29dc071ead59896f6c4ec.woff') format('woff'),
+       url('https://db.onlinewebfonts.com/t/571f8bd755d29dc071ead59896f6c4ec.ttf') format('truetype'),
+       url('https://db.onlinewebfonts.com/t/571f8bd755d29dc071ead59896f6c4ec.svg#Blender Pro Heavy') format('svg');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --font-title: 'Audiowide', cursive, sans-serif;
+    --font-audiowide: 'Audiowide', cursive, sans-serif;
+    --font-pulzion: 'Audiowide', cursive, sans-serif;
+    --font-beyond-earth: 'Audiowide', cursive, sans-serif;
+    --font-unison: 'Audiowide', cursive, sans-serif;
+    --font-super-sliced: 'Super Sliced Italic', 'Super Sliced', sans-serif;
+    --font-space-grotesk: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-blender: 'Blender Pro Heavy', 'Blender Pro', 'Oxanium', sans-serif;
+    --font-black-ops: 'Audiowide', cursive, sans-serif;
+    --font-orbitron: 'Audiowide', cursive, sans-serif;
+    --font-united: 'Audiowide', cursive, sans-serif;
+    --font-content: 'Oxanium', sans-serif;
+    --font-oxanium: 'Oxanium', sans-serif;
+    --font-chakra: 'Oxanium', sans-serif;
+    --font-rajdhani: 'Oxanium', sans-serif;
+    --font-telemetry: 'Share Tech Mono', monospace;
+    --font-alien: 'Rubik Glitch', monospace;
+    --font-silkscreen: 'Silkscreen', monospace;
+    --font-vt323: 'VT323', monospace;
+
+    /* Beyond The Earth 6-color Palette */
+    --theme-gold: #f8d092;
+    --theme-jade: #38a48c;
+    --theme-cyan: #159097;
+    --theme-teal: #1a5678;
+    --theme-indigo: #25245d;
+    --theme-purple: #571c56;
+
+    --theme-primary: #159097;
+    --theme-secondary: #38a48c;
+    --theme-accent: #f8d092;
+    --theme-dark-bg: #050716;
+    --theme-deep-purple: #571c56;
+    --theme-cosmic-indigo: #25245d;
+    --theme-deep-teal: #1a5678;
+  }
+
+  html,
+  body {
+    font-family: 'Oxanium', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #050716;
+    color: #f8d092;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+}
+
+/* Audiowide Font for Titles (Pulzion '26, Beyond The Earth, & Headings) */
+h1, h1 *,
+h2, h2 *,
+h3, h3 *,
+h4, h4 *,
+.font-audiowide,
+.font-audiowide *,
+.font-pulzion,
+.font-pulzion *,
+.font-beyond-earth,
+.font-beyond-earth *,
+.font-title,
+.font-title *,
+.font-orbitron,
+.font-orbitron *,
+.font-unison,
+.font-unison *,
+.font-unison-pro,
+.font-unison-pro *,
+.font-unison-bold,
+.font-unison-bold *,
+.font-black-ops,
+.font-black-ops * {
+  font-family: 'Audiowide', cursive, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em;
+}
+
+/* Super Sliced Font */
+.font-super-sliced,
+.font-supersliced {
+  font-family: 'Super Sliced Italic', 'Super Sliced', 'Oxanium', sans-serif !important;
+  font-style: italic;
+}
+
+.font-super-sliced-regular {
+  font-family: 'Super Sliced', 'Oxanium', sans-serif !important;
+  font-style: normal;
+}
+
+/* Space Grotesk Font */
+.font-space-grotesk,
+.font-space {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Blender Pro Heavy Font */
+.font-blender,
+.font-blender-heavy {
+  font-family: 'Blender Pro Heavy', 'Blender Pro', 'Oxanium', sans-serif !important;
+  font-weight: 900 !important;
+}
+
+/* Font Utilities mapped to Oxanium for all content */
+.font-oxanium,
+.font-content,
+.font-body,
+.font-chakra,
+.font-rajdhani,
+.font-sans {
+  font-family: 'Oxanium', sans-serif !important;
+}
+
+.font-telemetry {
+  font-family: 'Share Tech Mono', 'Orbitron', monospace !important;
+}
+
+.font-alien {
+  font-family: 'Rubik Glitch', 'Orbitron', monospace !important;
+  letter-spacing: 0.18em;
+}
+
+.font-silkscreen {
+  font-family: 'Silkscreen', 'Orbitron', monospace !important;
+}
+
+.font-vt323 {
+  font-family: 'VT323', 'Orbitron', monospace !important;
+}
+
+/* Palette Specific Utilities */
+.text-gold { color: #f8d092 !important; }
+.text-jade { color: #38a48c !important; }
+.text-cyan-aurora { color: #159097 !important; }
+.text-deep-teal { color: #1a5678 !important; }
+.text-cosmic-indigo { color: #25245d !important; }
+.text-deep-purple { color: #571c56 !important; }
+
+.bg-gold { background-color: #f8d092 !important; }
+.bg-jade { background-color: #38a48c !important; }
+.bg-cyan-aurora { background-color: #159097 !important; }
+.bg-deep-teal { background-color: #1a5678 !important; }
+.bg-cosmic-indigo { background-color: #25245d !important; }
+.bg-deep-purple { background-color: #571c56 !important; }
+
+.border-gold { border-color: #f8d092 !important; }
+.border-jade { border-color: #38a48c !important; }
+.border-cyan-aurora { border-color: #159097 !important; }
+.border-deep-teal { border-color: #1a5678 !important; }
+.border-deep-purple { border-color: #571c56 !important; }
+
+/* CRT and Artistic Overlays */
+.crt-artistic-overlay {
+  background: radial-gradient(circle at 50% 50%, rgba(21, 144, 151, 0.12) 0%, transparent 70%), linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(87, 28, 86, 0.05), rgba(37, 36, 93, 0.03), rgba(21, 144, 151, 0.05));
+  background-size: 100% 100%, 100% 4px, 3px 100%;
+}
+
+/* Sci-Fi Glows & HUD Curvilinear Accents */
+.alien-glow {
+  text-shadow: 0 0 10px rgba(21, 144, 151, 0.8), 0 0 20px rgba(248, 208, 146, 0.5);
+}
+
+.alien-glow-cyan {
+  text-shadow: 0 0 10px rgba(21, 144, 151, 0.85), 0 0 25px rgba(56, 164, 140, 0.6);
+}
+
+.alien-glow-gold {
+  text-shadow: 0 0 10px rgba(248, 208, 146, 0.85), 0 0 25px rgba(248, 208, 146, 0.5);
+}
+
+.alien-glow-jade {
+  text-shadow: 0 0 10px rgba(56, 164, 140, 0.85), 0 0 25px rgba(21, 144, 151, 0.5);
+}
+
+.alien-glow-purple {
+  text-shadow: 0 0 10px rgba(87, 28, 86, 0.85), 0 0 25px rgba(37, 36, 93, 0.6);
+}
+
+.box-glow-cyan {
+  box-shadow: 0 0 25px -5px rgba(21, 144, 151, 0.45), 0 0 10px rgba(21, 144, 151, 0.25);
+}
+
+.box-glow-gold {
+  box-shadow: 0 0 25px -5px rgba(248, 208, 146, 0.45), 0 0 15px rgba(248, 208, 146, 0.25);
+}
+
+.box-glow-jade {
+  box-shadow: 0 0 25px -5px rgba(56, 164, 140, 0.45), 0 0 15px rgba(56, 164, 140, 0.25);
+}
+
+.box-glow-purple {
+  box-shadow: 0 0 25px -5px rgba(87, 28, 86, 0.45), 0 0 15px rgba(37, 36, 93, 0.3);
+}
+
+/* Organic Curvilinear Card & Button Classes */
+.curvy-glass-panel {
+  border-radius: 1.75rem; /* 28px smooth curve */
+  background: rgba(26, 86, 120, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(21, 144, 151, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.curvy-glass-panel:hover {
+  border-color: rgba(248, 208, 146, 0.45);
+  transform: translateY(-2px);
+}
+
+.curvy-pill {
+  border-radius: 9999px;
+  transition: all 0.25s ease-in-out;
+}
+
+.curvy-pill:hover {
+  transform: scale(1.03);
+}
+
+/* Organic Curvilinear Blob Animation */
+@keyframes fluid-blob {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+.animate-fluid-blob {
+  animation: fluid-blob 8s ease-in-out infinite;
+}
+
+/* Alien Bio-Pulse & Glitch */
+@keyframes alien-bio-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.3), inset 0 0 10px rgba(74, 222, 128, 0.15);
+    border-color: rgba(74, 222, 128, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(74, 222, 128, 0.6), inset 0 0 20px rgba(74, 222, 128, 0.3);
+    border-color: rgba(74, 222, 128, 0.85);
+  }
+}
+
+.animate-bio-pulse {
+  animation: alien-bio-pulse 3s infinite ease-in-out;
+}
+
+/* Completely remove the scrollbar on the rightmost side while preserving scrollability */
+html,
+body,
+#root {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  display: none !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Scrollbar-none utility */
+.scrollbar-none,
+.no-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.scrollbar-none::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+@keyframes beam-pulse {
+  0%, 100% {
+    opacity: 0.75;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleX(1.06);
+  }
+}
+
+@keyframes float-ufo {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+.animate-beam {
+  animation: beam-pulse 4s ease-in-out infinite;
+}
+
+.animate-ufo {
+  animation: float-ufo 6s ease-in-out infinite;
+}
+
+/* Flying Alien Mothership Keyframe Animation */
+@keyframes flying-ship {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-10px) translateX(8px) rotate(1.2deg) scale(1.025);
+  }
+  50% {
+    transform: translateY(-18px) translateX(0px) rotate(-0.8deg) scale(1.04);
+  }
+  75% {
+    transform: translateY(-8px) translateX(-8px) rotate(-1.5deg) scale(1.015);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes plasma-glow {
+  0%, 100% {
+    opacity: 0.75;
+    filter: drop-shadow(0 0 20px rgba(21, 144, 151, 0.7));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 40px rgba(56, 164, 140, 0.95)) drop-shadow(0 0 60px rgba(248, 208, 146, 0.6));
+  }
+}
+
+.animate-flying-ship {
+  animation: flying-ship 10s ease-in-out infinite;
+}
+
+.animate-plasma-glow {
+  animation: plasma-glow 4s ease-in-out infinite;
+}
