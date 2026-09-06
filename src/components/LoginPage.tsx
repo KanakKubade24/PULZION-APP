@@ -6,11 +6,7 @@ import {
   EyeOff, 
   ShieldCheck, 
   AlertCircle, 
-  Sparkles, 
-  KeyRound, 
   UserCheck, 
-  Zap, 
-  Terminal,
   Lock,
   Mail
 } from 'lucide-react';
@@ -77,6 +73,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       {/* Top Back Link */}
       <div className="w-full max-w-md mb-4 flex items-center justify-between text-xs font-chakra text-slate-400">
         <button 
+          type="button"
           onClick={onBack}
           className="flex items-center gap-1.5 hover:text-[#f8d092] transition-colors cursor-pointer"
         >
@@ -130,12 +127,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4 font-chakra">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label htmlFor="login-identifier" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
               Email Terminal Address or Handle
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
+                id="login-identifier"
                 type="text"
                 required
                 value={identifier}
@@ -148,7 +146,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              <label htmlFor="login-password" className="text-xs font-bold uppercase tracking-wider text-slate-300">
                 Security Access Code
               </label>
               {onForgotPassword && (
@@ -165,6 +163,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
@@ -176,6 +175,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -212,6 +212,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           <p className="text-xs font-chakra text-slate-400">
             Don't have an operative pass yet?{' '}
             <button
+              type="button"
               onClick={onGoToRegister}
               className="text-[#f8d092] font-bold hover:underline cursor-pointer"
             >

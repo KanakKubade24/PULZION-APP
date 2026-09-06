@@ -8,27 +8,20 @@ import {
   Building2, 
   Calendar, 
   Ticket, 
-  Share2, 
   Copy, 
   Check, 
   Edit3, 
-  Shield, 
   Trophy, 
   Sparkles, 
-  Radio, 
-  QrCode, 
-  ArrowRight, 
-  ArrowLeft, 
   LogOut, 
   Zap, 
   CheckCircle2, 
   Gift, 
-  Star,
-  Layers,
-  ChevronRight,
+  Layers, 
+  ShieldCheck, 
+  X,
   ExternalLink,
-  ShieldCheck,
-  AlertCircle
+  Tag
 } from 'lucide-react';
 import { UserAccount, EventItem } from '../types';
 import { useAlienTheme } from '../context/ThemeContext';
@@ -688,68 +681,61 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
 
             {userEvents.length === 0 ? (
-              <div className="text-center py-8">
-                <Ticket className="w-10 h-10 text-slate-500 mx-auto mb-2 opacity-50" />
-                <p className="font-orbitron text-xs sm:text-sm text-slate-300 font-bold mb-1">
-                  NO REGISTERED MISSIONS YET
-                </p>
-                <p className="text-xs font-chakra text-slate-400 max-w-md mx-auto mb-4">
-                  You haven't enrolled in any technical or non-technical challenges. Explore our full roster to compete for ₹5,00,000+ prize pools!
+              <div className="text-center py-12 px-4 border border-dashed rounded-2xl border-slate-700 bg-black/20">
+                <Ticket className="w-12 h-12 text-slate-500 mx-auto mb-3" />
+                <h3 className="font-orbitron font-bold text-base text-white mb-1">
+                  NO ACTIVE MISSIONS ENROLLED
+                </h3>
+                <p className="text-slate-400 font-chakra text-xs max-w-md mx-auto mb-5">
+                  You haven't enlisted in any operations yet. Access the mission directory to lock in your spot.
                 </p>
                 <button
                   onClick={onExploreEvents}
-                  className="px-5 py-2 rounded-full font-chakra font-bold text-xs tracking-wider border text-[#f8d092] border-[#159097] hover:bg-[#159097] hover:text-[#050716] transition-all cursor-pointer"
+                  className="px-6 py-2.5 rounded-full font-orbitron font-bold text-xs text-[#050716] bg-[#f8d092] hover:bg-white transition-all cursor-pointer shadow-lg inline-flex items-center gap-2"
                 >
-                  BROWSE MISSIONS CATALOGUE
+                  <Sparkles className="w-4 h-4" />
+                  <span>BROWSE AVAILABLE MISSIONS</span>
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                {userEvents.map((ev) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {userEvents.map((event) => (
                   <div
-                    key={ev.id}
-                    className="p-4 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between group hover:border-[#f8d092]"
-                    style={{
-                      backgroundColor: 'rgba(5, 7, 22, 0.65)',
-                      borderColor: 'rgba(21, 144, 151, 0.45)',
-                    }}
+                    key={event.id}
+                    className="p-4 rounded-2xl border bg-slate-900/80 border-slate-800 flex flex-col justify-between hover:border-[#159097] transition-all group"
                   >
                     <div>
-                      <div className="flex items-center justify-between gap-2 mb-1.5">
-                        <span className="text-[9px] font-chakra font-bold uppercase px-2 py-0.5 rounded-full bg-[#159097]/30 text-[#f8d092] border border-[#159097]/60">
-                          {ev.category}
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-chakra font-bold bg-[#159097]/20 text-[#f8d092] border border-[#159097]/40 flex items-center gap-1">
+                          <Tag className="w-2.5 h-2.5" />
+                          {event.category || 'EVENT'}
                         </span>
-                        <span className="text-[9px] font-chakra font-bold text-emerald-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" />
-                          CONFIRMED
+                        <span className="text-[10px] font-telemetry text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800">
+                          REGISTERED
                         </span>
                       </div>
 
-                      <h3 className="font-orbitron font-bold text-sm text-white group-hover:text-[#f8d092] transition-colors mb-0.5">
-                        {ev.title}
+                      <h3 className="font-orbitron font-bold text-base text-white group-hover:text-[#f8d092] transition-colors mb-2">
+                        {event.title}
                       </h3>
-                      <p className="text-xs font-chakra text-slate-400 line-clamp-2 mb-2">
-                        {ev.tagline}
-                      </p>
 
-                      <div className="space-y-1 text-xs font-telemetry text-slate-300 mb-3">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-[#38a48c]" />
-                          <span>{ev.date} • {ev.time}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                          <span>Prize Pool: {ev.prizePool}</span>
-                        </div>
-                      </div>
+                      <p className="text-slate-300 font-chakra text-xs line-clamp-2 mb-4">
+                        {event.description}
+                      </p>
                     </div>
 
-                    <div className="flex items-center justify-between border-t pt-2.5 border-slate-800 text-xs">
-                      <span className="font-chakra text-slate-400 text-xs">Entry: <strong className="text-[#f8d092]">₹{ev.entryFee}</strong></span>
-                      <span className="font-chakra font-bold text-[#38a48c] flex items-center gap-1 text-xs">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                        <span>Enrolled</span>
-                      </span>
+                    <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-chakra text-slate-400">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#38a48c]" />
+                        <span>{event.date || 'TBA'}</span>
+                      </div>
+                      <button
+                        onClick={onExploreEvents}
+                        className="text-[#f8d092] hover:underline text-[11px] font-bold flex items-center gap-1"
+                      >
+                        <span>Details</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -762,194 +748,145 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
       {/* EDIT PROFILE MODAL */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div 
-            className="max-w-xl w-full rounded-3xl border shadow-2xl overflow-hidden relative"
+            className="w-full max-w-lg rounded-3xl border shadow-2xl p-6 relative overflow-hidden"
             style={{
-              backgroundColor: '#25245d',
-              borderColor: 'rgba(21, 144, 151, 0.7)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 35px rgba(21, 144, 151, 0.4)',
+              backgroundColor: '#131238',
+              borderColor: 'rgba(21, 144, 151, 0.8)',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(21, 144, 151, 0.3)',
             }}
           >
-            {/* Modal Header */}
-            <div className="p-5 border-b flex items-center justify-between" style={{ backgroundColor: 'rgba(26, 86, 120, 0.6)', borderColor: 'rgba(21, 144, 151, 0.4)' }}>
-              <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-[#f8d092]" />
-                <h3 className="font-orbitron font-bold text-sm text-white">
-                  UPDATE CREW ID DOSSIER
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="text-slate-300 hover:text-white text-xs font-chakra font-bold px-2 py-1 rounded-full border border-slate-700"
-              >
-                CANCEL
-              </button>
+            <button
+              onClick={() => setIsEditModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-full bg-slate-800/50"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
+              <Edit3 className="w-5 h-5 text-[#f8d092]" />
+              <h3 className="font-orbitron font-bold text-lg text-white">
+                UPDATE CREW DOSSIER
+              </h3>
             </div>
 
-            {/* Modal Form */}
-            <form onSubmit={handleSaveProfile} className="p-6 space-y-4">
-              
-              {/* Username */}
-              <div>
-                <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                  Operative Username (Unique Handle)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">@</span>
-                  <input
-                    type="text"
-                    value={editFormData.username}
-                    onChange={(e) => setEditFormData({ ...editFormData, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                    placeholder="cadet_callsign"
-                    className="w-full pl-8 pr-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* First & Last Name */}
+            <form onSubmit={handleSaveProfile} className="space-y-3 font-chakra text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                    First Name
-                  </label>
+                  <label className="block text-slate-300 font-bold mb-1">First Name</label>
                   <input
                     type="text"
                     value={editFormData.firstName}
                     onChange={(e) => setEditFormData({ ...editFormData, firstName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                    Last Name
-                  </label>
+                  <label className="block text-slate-300 font-bold mb-1">Last Name</label>
                   <input
                     type="text"
                     value={editFormData.lastName}
                     onChange={(e) => setEditFormData({ ...editFormData, lastName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                     required
                   />
                 </div>
               </div>
 
-              {/* Email */}
               <div>
-                <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                  Email Address
-                </label>
+                <label className="block text-slate-300 font-bold mb-1">Call Sign (@Username)</label>
+                <input
+                  type="text"
+                  value={editFormData.username}
+                  onChange={(e) => setEditFormData({ ...editFormData, username: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-bold mb-1">Email Address</label>
                 <input
                   type="email"
                   value={editFormData.email}
                   onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                  style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                   required
                 />
               </div>
 
-              {/* Phone & Contact Number */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                    Phone Number
-                  </label>
+                  <label className="block text-slate-300 font-bold mb-1">Phone Number</label>
                   <input
                     type="text"
                     value={editFormData.phone}
                     onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                    Contact Number
-                  </label>
+                  <label className="block text-slate-300 font-bold mb-1">Alt Contact</label>
                   <input
                     type="text"
                     value={editFormData.contactNumber}
                     onChange={(e) => setEditFormData({ ...editFormData, contactNumber: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
-                    required
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                   />
                 </div>
               </div>
 
-              {/* College */}
               <div>
-                <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                  College / Institution
-                </label>
+                <label className="block text-slate-300 font-bold mb-1">College / Institution</label>
                 <input
                   type="text"
                   value={editFormData.college}
                   onChange={(e) => setEditFormData({ ...editFormData, college: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                  style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                   required
                 />
               </div>
 
-              {/* Year & Referral Code */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                    Academic Year
-                  </label>
-                  <select
+                  <label className="block text-slate-300 font-bold mb-1">Academic Year</label>
+                  <input
+                    type="text"
                     value={editFormData.year}
                     onChange={(e) => setEditFormData({ ...editFormData, year: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border bg-[#050716] text-white font-chakra text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
-                  >
-                    <option value="First Year (FE)">First Year (FE)</option>
-                    <option value="Second Year (SE)">Second Year (SE)</option>
-                    <option value="Third Year (TE)">Third Year (TE)</option>
-                    <option value="Final Year (BE/BTech)">Final Year (BE/BTech)</option>
-                    <option value="Post-Graduate / MCA / PhD">Post-Graduate / MCA / PhD</option>
-                  </select>
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
+                    required
+                  />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-chakra font-bold uppercase tracking-wider text-slate-300 mb-1">
-                    Custom Referral Code
-                  </label>
+                  <label className="block text-slate-300 font-bold mb-1">Referral Code</label>
                   <input
                     type="text"
                     value={editFormData.referralCode}
-                    onChange={(e) => setEditFormData({ ...editFormData, referralCode: e.target.value.toUpperCase() })}
-                    className="w-full px-4 py-2.5 rounded-xl border bg-black/50 text-[#f8d092] font-chakra font-bold text-sm focus:outline-none focus:border-[#f8d092]"
-                    style={{ borderColor: 'rgba(21, 144, 151, 0.5)' }}
+                    onChange={(e) => setEditFormData({ ...editFormData, referralCode: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#f8d092]"
                   />
                 </div>
               </div>
 
-              {/* Footer Save Button */}
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800 mt-4">
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl font-chakra font-bold text-xs border border-slate-700 text-slate-300 hover:text-white"
+                  className="px-4 py-2 rounded-xl text-slate-300 hover:text-white bg-slate-800"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl font-orbitron font-bold text-xs tracking-wider border transition-all cursor-pointer hover:scale-105 shadow-lg bg-[#f8d092] text-[#050716] border-white"
+                  className="px-6 py-2 rounded-xl font-orbitron font-bold text-xs text-[#050716] bg-[#f8d092] hover:bg-white transition-all shadow-md"
                 >
                   SAVE CHANGES
                 </button>
               </div>
-
             </form>
           </div>
         </div>

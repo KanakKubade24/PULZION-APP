@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, 
@@ -10,20 +10,14 @@ import {
   CheckCircle2, 
   Phone, 
   Mail, 
-  Sparkles, 
   Zap, 
-  AlertCircle,
   Share2,
-  Ticket,
   Radio,
-  Eye,
-  Disc,
   ShoppingCart,
   Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { EventItem, UserAccount } from '../types';
-import { AlienBadge, AlienButton, AlienDecoderText } from './AlienUIElements';
 import { useAlienTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 
@@ -50,6 +44,29 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
   const { isInCart, addToCart, openCart } = useCart();
   const [copiedLink, setCopiedLink] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'rounds' | 'rules' | 'coordinators'>('overview');
+
+  // Reset tab active state when target event changes
+  useEffect(() => {
+    if (event) {
+      setActiveSubTab('overview');
+    }
+  }, [event?.id]);
+
+  // Lock background scrolling & support Escape key closing
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.body.style.overflow = 'hidden';
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen || !event) return null;
 
@@ -80,16 +97,35 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
           particleCount: 80,
           spread: 70,
           origin: { y: 0.6 },
-          colors: [currentTheme.palette.primaryHex, currentTheme.palette.secondaryHex, '#ffffff'],
+          colors: [
+            currentTheme.palette.primaryHex || '#159097', 
+            currentTheme.palette.secondaryHex || '#38a48c', 
+            '#ffffff'
+          ],
         });
-      } catch (e) {}
+      } catch (e) {
+        // Silently catch confetti failure
+      }
     }
   };
 
-  const handleShare = () => {
-    navigator.clipboard?.writeText?.(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+  const handleShare = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(window.location.href);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = window.location.href;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
   };
 
   return (
@@ -102,11 +138,15 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
           exit={{ opacity: 0 }}
           onClick={onClose}
           className="absolute inset-0 bg-black/85 backdrop-blur-md transition-opacity"
+          aria-hidden="true"
         />
 
         <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
           <motion.div
             id="event-detail-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="drawer-event-title"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -118,7 +158,7 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
               boxShadow: `0 0 50px rgba(21, 144, 151, 0.35)`,
             }}
           >
-            {/* Top Glowing Header Accent (Smooth curved line) */}
+            {/* Top Glowing Header Accent */}
             <div 
               className="absolute top-0 left-0 right-0 h-1.5 shadow-md"
               style={{
@@ -153,6 +193,7 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
 
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={handleShare}
                     className="px-3 py-1.5 rounded-full border text-xs font-chakra transition-colors flex items-center gap-1.5 cursor-pointer"
                     style={{
@@ -161,12 +202,14 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
                       color: '#f8d092',
                     }}
                     title="Copy transmission link"
+                    aria-label="Share event link"
                   >
                     <Share2 className="w-3.5 h-3.5" />
                     <span>{copiedLink ? 'LINK COPIED' : 'SHARE'}</span>
                   </button>
 
                   <button
+                    type="button"
                     onClick={onClose}
                     className="p-1.5 rounded-full border transition-colors cursor-pointer"
                     style={{
@@ -174,13 +217,14 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
                       borderColor: 'rgba(21, 144, 151, 0.5)',
                       color: '#f8d092',
                     }}
+                    aria-label="Close event drawer"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
               </div>
 
-              <h2 className="font-orbitron font-extrabold text-2xl sm:text-3xl tracking-wide mb-2" style={{ color: '#f8d092' }}>
+              <h2 id="drawer-event-title" className="font-orbitron font-extrabold text-2xl sm:text-3xl tracking-wide mb-2" style={{ color: '#f8d092' }}>
                 {event.title}
               </h2>
               <p className="text-sm font-chakra leading-relaxed" style={{ color: '#d8e8ea' }}>
@@ -188,7 +232,7 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
               </p>
             </div>
 
-            {/* Navigation Sub-tabs (Smooth Curvilinear Pill Tabs) */}
+            {/* Navigation Sub-tabs */}
             <div 
               className="px-5 sm:px-6 py-2.5 border-b flex gap-2 overflow-x-auto"
               style={{
@@ -199,6 +243,7 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
               {(['overview', 'rounds', 'rules', 'coordinators'] as const).map((tab) => (
                 <button
                   key={tab}
+                  type="button"
                   onClick={() => setActiveSubTab(tab)}
                   className={`px-4 py-1.5 rounded-full text-xs font-chakra font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer border ${
                     activeSubTab === tab
@@ -220,7 +265,6 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
             <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
               {activeSubTab === 'overview' && (
                 <>
-                  {/* Quick Stat Blocks (Smooth Rounded-2xl Cards) */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div 
                       className="p-3.5 rounded-2xl border"
@@ -287,7 +331,6 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
                     </div>
                   </div>
 
-                  {/* Description Dossier */}
                   <div className="space-y-3">
                     <h3 className="font-orbitron font-bold text-sm uppercase tracking-wider flex items-center gap-2" style={{ color: '#f8d092' }}>
                       <Radio className="w-4 h-4" style={{ color: '#38a48c' }} />
@@ -305,7 +348,6 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
                     </p>
                   </div>
 
-                  {/* Date & Time Schedule Pill */}
                   <div 
                     className="p-4 rounded-2xl border flex items-center justify-between"
                     style={{
@@ -439,7 +481,7 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
               )}
             </div>
 
-            {/* Sticky Action Footer (Smooth Curvilinear Pill Buttons) */}
+            {/* Sticky Action Footer */}
             <div 
               className="p-4 sm:p-5 border-t flex items-center justify-between gap-3"
               style={{
@@ -497,6 +539,7 @@ export const EventDetailDrawer: React.FC<EventDetailDrawerProps> = ({
 
                     <button
                       id="drawer-register-btn"
+                      type="button"
                       onClick={handleRegisterClick}
                       className="flex items-center gap-2 px-5 py-3 rounded-full font-orbitron font-bold text-xs tracking-wider shadow-xl cursor-pointer hover:scale-105 transition-all"
                       style={{

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   X, 
   KeyRound, 
   Mail, 
   Lock, 
-  CheckCircle2, 
   ArrowRight, 
   ShieldCheck,
   RotateCw
@@ -30,6 +29,34 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Reset internal state when modal opens/closes
+  const resetForm = useCallback(() => {
+    setStep(1);
+    setEmail('');
+    setOtpCode('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setError(null);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      resetForm();
+    }
+  }, [isOpen, resetForm]);
+
+  // Handle ESC key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSendToken = async (e: React.FormEvent) => {
@@ -54,7 +81,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpCode || otpCode.length < 4) {
-      setError('Please enter the 6-digit clearance code sent to your email.');
+      setError('Please enter the clearance code sent to your email.');
       return;
     }
     setError(null);
@@ -77,8 +104,15 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+      onClick={onClose}
+    >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        onClick={(e) => e.stopPropagation()}
         className="w-full max-w-md rounded-3xl border shadow-2xl overflow-hidden relative flex flex-col"
         style={{
           backgroundColor: 'rgba(5, 7, 22, 0.96)',
@@ -93,7 +127,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               <KeyRound className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-orbitron font-bold text-sm sm:text-base text-white">
+              <h2 id="modal-title" className="font-orbitron font-bold text-sm sm:text-base text-white">
                 CLEARANCE CODE RECOVERY
               </h2>
               <span className="text-[10px] font-telemetry text-slate-400">
@@ -103,8 +137,10 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            aria-label="Close dialog"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -127,12 +163,13 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               </p>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label htmlFor="email-input" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   Operative Email Address
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
+                    id="email-input"
                     type="email"
                     required
                     value={email}
@@ -161,10 +198,11 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               </p>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label htmlFor="otp-input" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   6-Digit Clearance Token
                 </label>
                 <input
+                  id="otp-input"
                   type="text"
                   maxLength={6}
                   required
@@ -189,12 +227,13 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           {step === 3 && (
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label htmlFor="new-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   New Security Access Code
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
+                    id="new-password"
                     type="password"
                     required
                     value={newPassword}
@@ -206,12 +245,13 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label htmlFor="confirm-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   Confirm Access Code
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
+                    id="confirm-password"
                     type="password"
                     required
                     value={confirmPassword}

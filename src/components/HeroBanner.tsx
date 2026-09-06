@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShieldAlert, 
-  Sparkles, 
   ChevronRight, 
   Trophy, 
   Users, 
   Flame,
   Zap,
   Terminal,
-  Clock,
-  Radio
+  Clock
 } from 'lucide-react';
 import { useAlienTheme } from '../context/ThemeContext';
 
 interface HeroBannerProps {
   onRegisterClick: () => void;
   onExploreEventsClick: () => void;
+  mothershipImgSrc?: string;
 }
+
+// Target Fest Date: October 15, 2026
+const TARGET_DATE_MS = new Date('2026-10-15T09:00:00').getTime();
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({
   onRegisterClick,
   onExploreEventsClick,
+  mothershipImgSrc = "/src/assets/images/alien_mothership_title_1788290808780.jpg"
 }) => {
   const { currentTheme } = useAlienTheme();
 
-  // Fest Date: October 15, 2026
-  const targetDate = new Date('2026-10-15T09:00:00').getTime();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -35,14 +36,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
   useEffect(() => {
     const updateCountdown = () => {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
+      const now = Date.now();
+      const difference = TARGET_DATE_MS - now;
 
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
           hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
+          minutes: Math.floor((difference / (1000 * 60)) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         });
       } else {
@@ -53,7 +54,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, []);
 
   return (
     <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 bg-transparent">
@@ -105,7 +106,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             {/* Background Galaxy & Mothership Layer */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
               
-              {/* Galaxy Nebula Swirl 1: Deep Cosmic Indigo & Royal Blue Cloud */}
+              {/* Galaxy Nebula Swirl 1 */}
               <div 
                 className="absolute inset-0 opacity-80 mix-blend-screen"
                 style={{
@@ -113,7 +114,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 }}
               />
 
-              {/* Galaxy Nebula Swirl 2: Cyan Plasma Dust & Stellar Clouds */}
+              {/* Galaxy Nebula Swirl 2 */}
               <div 
                 className="absolute inset-0 opacity-70 mix-blend-screen"
                 style={{
@@ -129,9 +130,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 }}
               />
 
-              {/* Galaxy Starfield: Layer of Shimmering & Twinkling Stars */}
+              {/* Galaxy Starfield */}
               <div className="absolute inset-0 z-0">
-                {/* Micro & Bright Stars distributed across galaxy */}
                 <div className="absolute top-[12%] left-[8%] w-1 h-1 bg-cyan-200 rounded-full animate-pulse shadow-[0_0_6px_#38bdf8]" style={{ animationDuration: '2.5s' }} />
                 <div className="absolute top-[28%] left-[22%] w-1.5 h-1.5 bg-amber-100 rounded-full animate-pulse shadow-[0_0_8px_#fde68a]" style={{ animationDuration: '3.2s' }} />
                 <div className="absolute top-[75%] left-[14%] w-1 h-1 bg-emerald-200 rounded-full animate-pulse shadow-[0_0_6px_#34d399]" style={{ animationDuration: '2.8s' }} />
@@ -175,13 +175,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 </div>
               </div>
 
-              {/* Alien Mothership positioned seamlessly inside the dark blue galaxy */}
+              {/* Alien Mothership Visual */}
               <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end">
                 <div className="relative w-[360px] sm:w-[500px] md:w-[620px] lg:w-[720px] max-w-none opacity-95 transition-opacity duration-500 -right-6 sm:right-2 md:right-6">
                   <img
-                    src="/src/assets/images/alien_mothership_title_1788290808780.jpg"
+                    src={mothershipImgSrc}
                     alt="Extraterrestrial Mothership"
-                    referrerPolicy="no-referrer"
+                    aria-hidden="true"
                     className="w-full h-auto object-contain rounded-2xl drop-shadow-[0_15px_50px_rgba(21,144,151,0.9)] brightness-105 contrast-110"
                     style={{
                       maskImage: 'radial-gradient(ellipse at 52% 50%, rgba(0,0,0,1) 55%, rgba(0,0,0,0.7) 80%, rgba(0,0,0,0) 96%)',
@@ -189,7 +189,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                     }}
                   />
                   
-                  {/* Glowing Plasma Thruster Beam projecting down from Mothership core */}
+                  {/* Thruster Beam */}
                   <div 
                     className="absolute bottom-1 left-1/2 -translate-x-1/2 w-44 sm:w-72 h-16 pointer-events-none opacity-90"
                     style={{
@@ -201,7 +201,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 </div>
               </div>
 
-              {/* Smooth Dark Cosmic Navy Directional Gradient for Text Readability */}
+              {/* Text Readability Gradient Overlay */}
               <div 
                 className="absolute inset-0 z-1"
                 style={{
@@ -210,7 +210,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               />
             </div>
 
-            {/* Foreground Title & Headline Content */}
+            {/* Foreground Title Content */}
             <div className="relative z-10 pl-2 sm:pl-4 border-l-2 py-1 max-w-xl sm:max-w-2xl" style={{ borderColor: 'rgba(21, 144, 151, 0.8)' }}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-chakra font-bold tracking-widest uppercase bg-[#159097]/30 text-[#38a48c] border border-[#159097]/50 shadow-sm">
@@ -221,9 +221,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
               <h1 
                 className="font-audiowide text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-wide uppercase leading-tight select-none font-normal" 
-                style={{ 
-                  fontFamily: "'Audiowide', cursive, sans-serif",
-                }}
+                style={{ fontFamily: "'Audiowide', cursive, sans-serif" }}
               >
                 <span 
                   style={{ 
@@ -245,7 +243,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 </span>
               </h1>
 
-              {/* Subtitle: BEYOND THE EARTH (Audiowide Font) */}
               <p 
                 className="font-audiowide text-xl sm:text-3xl md:text-4xl lg:text-5xl tracking-[0.12em] sm:tracking-[0.16em] mt-2 sm:mt-3 uppercase transition-colors duration-500 font-normal"
                 style={{
@@ -260,7 +257,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
           </div>
 
-          {/* Narrative & Lore Tagline */}
+          {/* Tagline Block */}
           <p 
             className="max-w-2xl text-sm sm:text-base lg:text-lg font-chakra font-medium leading-relaxed mb-8 backdrop-blur-sm p-4 rounded-2xl border shadow-lg"
             style={{
@@ -279,6 +276,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           <div className="flex flex-wrap items-center gap-4">
             <button
               id="hero-register-btn"
+              type="button"
               onClick={onRegisterClick}
               className="flex items-center gap-3 px-8 py-4 rounded-full font-orbitron font-black text-sm tracking-wider shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
@@ -294,6 +292,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
             <button
               id="hero-explore-btn"
+              type="button"
               onClick={onExploreEventsClick}
               className="flex items-center gap-3 px-7 py-4 rounded-full font-chakra font-bold text-sm sm:text-base tracking-wider transition-all hover:scale-105 cursor-pointer shadow-lg backdrop-blur-md border"
               style={{
@@ -310,7 +309,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
         </div>
 
-        {/* Countdown Timer HUD Block (Smooth Curvilinear Card with rounded-3xl) */}
+        {/* Countdown HUD */}
         <div 
           className="max-w-3xl rounded-3xl p-6 sm:p-7 backdrop-blur-xl shadow-2xl relative overflow-hidden border transition-all duration-500"
           style={{
@@ -354,7 +353,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               </div>
             </div>
 
-            {/* Digits Grid (Curved Pill Capsules) */}
+            {/* Digits Grid */}
             <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center w-full sm:w-auto">
               {[
                 { label: 'DAYS', value: timeLeft.days },
@@ -389,7 +388,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </div>
         </div>
 
-        {/* Quick Highlights Ticker Grid (Curved rounded-2xl Cards) */}
+        {/* Highlights Ticker Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8 max-w-4xl">
           {[
             { icon: Trophy, label: 'TOTAL PRIZE POOL', value: '₹5,00,000+', iconColor: '#f8d092' },
@@ -397,7 +396,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             { icon: Users, label: 'EARTH OPERATIVES', value: '5,000+', iconColor: '#38a48c' },
             { icon: Flame, label: 'HACKATHON DURATION', value: '36H SPRINT', iconColor: '#f8d092' },
           ].map((stat, i) => {
-            const Icon = stat.icon;
+            const IconComponent = stat.icon;
             return (
               <div
                 key={i}
@@ -408,7 +407,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 }}
               >
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Icon className="w-4 h-4" style={{ color: stat.iconColor }} />
+                  <IconComponent className="w-4 h-4" style={{ color: stat.iconColor }} />
                   <span className="text-[10px] font-chakra font-bold tracking-wider" style={{ color: '#38a48c' }}>
                     {stat.label}
                   </span>

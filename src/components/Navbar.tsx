@@ -9,7 +9,6 @@ import {
   ShoppingCart
 } from 'lucide-react';
 import { UserAccount } from '../types';
-import { useAlienTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { APP_CONFIG } from '../theme/designSystem';
 
@@ -27,7 +26,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
 }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { currentTheme } = useAlienTheme();
   const { cartCount, openCart } = useCart();
 
   // Top-level Navigation Links
@@ -59,9 +57,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Hamburger Menu Toggle */}
             <button
               id="nav-mobile-menu-btn"
+              type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
               className="lg:hidden p-2 rounded-xl border border-slate-800 bg-black/40 text-slate-300 hover:text-white cursor-pointer"
-              aria-label="Toggle Menu"
+              aria-label="Toggle Navigation Menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation-drawer"
             >
               {mobileOpen ? <X className="w-5 h-5 text-[#f8d092]" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -69,6 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Profile / Crew ID Icon Button */}
             <button
               id="nav-crew-id-btn"
+              type="button"
               onClick={() => handleNavClick(currentUser ? 'profile' : 'login')}
               className="relative p-2 rounded-xl border transition-all cursor-pointer hover:scale-105"
               style={{
@@ -77,6 +79,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 color: activeTab === 'profile' ? '#f8d092' : '#ffffff',
               }}
               title={currentUser ? "Crew ID & Profile" : "Sign In"}
+              aria-label={currentUser ? "View Profile" : "Sign In"}
             >
               <User className="w-4 h-4 text-[#f8d092]" />
               {currentUser && (
@@ -87,6 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Cart Button */}
             <button
               id="nav-my-cart-btn"
+              type="button"
               onClick={openCart}
               className="relative flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-chakra font-bold tracking-wider transition-all shadow-md cursor-pointer hover:scale-105"
               style={{
@@ -96,6 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 boxShadow: cartCount > 0 ? '0 0 15px rgba(248, 208, 146, 0.35)' : '0 0 10px rgba(21, 144, 151, 0.2)',
               }}
               title="Open My Cart"
+              aria-label={`Open Cart (${cartCount} items)`}
             >
               <ShoppingCart className="w-3.5 h-3.5 text-[#f8d092]" />
               <span className="hidden sm:inline">CART</span>
@@ -110,7 +115,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Center Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-1.5">
+          <nav className="hidden lg:flex items-center gap-1.5" aria-label="Main Navigation">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -118,6 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   id={`nav-link-${item.id}`}
+                  type="button"
                   onClick={() => handleNavClick(item.id)}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-chakra font-bold tracking-wider transition-all duration-200 cursor-pointer ${
                     isActive
@@ -128,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     backgroundColor: isActive ? 'rgba(26, 86, 120, 0.5)' : 'transparent',
                     borderColor: isActive ? '#159097' : 'transparent',
                     color: isActive ? '#f8d092' : undefined,
-                    boxShadow: isActive ? `0 0 15px rgba(21, 144, 151, 0.4)` : undefined,
+                    boxShadow: isActive ? '0 0 15px rgba(21, 144, 151, 0.4)' : undefined,
                   }}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -141,8 +147,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Right: Brand Title Branding (PULZION '26 & BEYOND THE EARTH) */}
           <button 
             id="nav-brand-logo"
+            type="button"
             onClick={() => handleNavClick('home')}
             className="flex flex-col items-end text-right group transition-transform focus:outline-none cursor-pointer"
+            aria-label="Pulzion Home"
           >
             <div className="flex items-center gap-2">
               <span 
@@ -165,6 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileOpen && (
         <div 
+          id="mobile-navigation-drawer"
           className="lg:hidden border-b px-4 pt-3 pb-6 space-y-3 animate-in fade-in slide-in-from-top-4 duration-200 max-h-[85vh] overflow-y-auto"
           style={{
             backgroundColor: 'rgba(5, 7, 22, 0.98)',
@@ -178,6 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => handleNavClick(item.id)}
                   className={`p-3 rounded-xl border text-left flex items-center gap-2.5 font-chakra text-xs font-bold transition-all ${
                     isActive
@@ -195,6 +205,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="pt-2 border-t border-slate-800/80 space-y-2">
             {!currentUser ? (
               <button
+                type="button"
                 onClick={() => handleNavClick('login')}
                 className="w-full py-2.5 rounded-xl font-orbitron font-bold text-xs bg-[#f8d092] text-[#050716] text-center"
               >
@@ -202,6 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             ) : (
               <button
+                type="button"
                 onClick={() => {
                   setMobileOpen(false);
                   onLogout();

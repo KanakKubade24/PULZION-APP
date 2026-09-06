@@ -20,20 +20,50 @@ interface RegisterPageProps {
   allEvents: EventItem[];
 }
 
+const COLLEGES = [
+  'Pune Institute of Computer Technology (PICT)',
+  'College of Engineering Pune (COEP Tech)',
+  'Veermata Jijabai Technological Institute (VJTI Mumbai)',
+  'Indian Institute of Technology Bombay (IITB)',
+  'BITS Pilani',
+  'MIT World Peace University (MIT-WPU)',
+  'Vishwakarma Institute of Technology (VIT Pune)',
+  'Sardar Patel Institute of Technology (SPIT)',
+  'Delhi Technological University (DTU)',
+  'National Institute of Technology (NIT)',
+  'Other Extraterrestrial Institution',
+] as const;
+
+const ACADEMIC_YEARS = [
+  'First Year (FE)',
+  'Second Year (SE)',
+  'Third Year (TE)',
+  'Final Year (BE/BTech)',
+  'Post-Graduate / MTech / MCA / PhD',
+] as const;
+
+// Custom Alien Tech reCAPTCHA Refresh SVG
+const RecaptchaIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
+  <svg viewBox="0 0 48 48" className={`${className} fill-current`}>
+    <path d="M24 8V2l-8 8 8 8v-6c6.63 0 12 5.37 12 12 0 2.03-.51 3.93-1.39 5.61l2.94 2.94C39.06 29.83 40 27.02 40 24c0-8.84-7.16-16-16-16zm-8 22c0-2.03.51-3.93 1.39-5.61l-2.94-2.94C12.94 18.17 12 20.98 12 24c0 8.84 7.16 16 16 16v6l8-8-8-8v6c-6.63 0-12-5.37-12-12z"/>
+  </svg>
+);
+
 export const RegisterPage: React.FC<RegisterPageProps> = ({
   onBack,
   onGoToLogin,
   onRegisterSuccess,
 }) => {
   const { currentTheme } = useAlienTheme();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     username: '',
     email: '',
     phone: '',
-    college: 'Pune Institute of Computer Technology (PICT)',
-    year: 'Third Year (TE)',
+    college: COLLEGES[0],
+    year: ACADEMIC_YEARS[2],
     password: '',
     confirmPassword: '',
   });
@@ -44,30 +74,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const colleges = [
-    'Pune Institute of Computer Technology (PICT)',
-    'College of Engineering Pune (COEP Tech)',
-    'Veermata Jijabai Technological Institute (VJTI Mumbai)',
-    'Indian Institute of Technology Bombay (IITB)',
-    'BITS Pilani',
-    'MIT World Peace University (MIT-WPU)',
-    'Vishwakarma Institute of Technology (VIT Pune)',
-    'Sardar Patel Institute of Technology (SPIT)',
-    'Delhi Technological University (DTU)',
-    'National Institute of Technology (NIT)',
-    'Other Extraterrestrial Institution',
-  ];
-
-  const years = [
-    'First Year (FE)',
-    'Second Year (SE)',
-    'Third Year (TE)',
-    'Final Year (BE/BTech)',
-    'Post-Graduate / MTech / MCA / PhD',
-  ];
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleCaptchaClick = () => {
-    if (captchaChecked) return;
+    if (captchaChecked || captchaLoading) return;
     setCaptchaLoading(true);
     setTimeout(() => {
       setCaptchaLoading(false);
@@ -109,7 +122,6 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
       return;
     }
 
-    // Trigger victory confetti
     try {
       confetti({
         particleCount: 80,
@@ -117,15 +129,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         origin: { y: 0.6 },
         colors: [currentTheme.palette.primaryHex, currentTheme.palette.secondaryHex, '#ffffff'],
       });
-    } catch (e) {}
+    } catch {
+      // Fallback if canvas-confetti fails to load
+    }
 
-    // Generate Cadet User Account
-    const randomTicketId = 'PLZ-' + Math.floor(100000 + Math.random() * 900000).toString();
+    const randomTicketId = `PLZ-${Math.floor(100000 + Math.random() * 900000)}`;
     const cleanFirstName = formData.firstName.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
     const defaultUsername = `cadet_${cleanFirstName || 'operative'}_${Math.floor(100 + Math.random() * 900)}`;
 
     const newUser: UserAccount = {
-      id: 'usr_' + Date.now(),
+      id: `usr_${Date.now()}`,
       username: formData.username.trim() ? formData.username.trim().replace(/^@/, '') : defaultUsername,
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
@@ -143,10 +156,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     onRegisterSuccess(newUser);
   };
 
+  const inputStyle = {
+    backgroundColor: 'rgba(26, 86, 120, 0.4)',
+    borderColor: 'rgba(21, 144, 151, 0.5)',
+  };
+
   return (
     <div className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 py-10 sm:py-16">
-      
-      {/* Main Registration Container (Curved rounded-3xl container) */}
       <div
         className="w-full max-w-lg rounded-3xl border backdrop-blur-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl"
         style={{
@@ -155,16 +171,15 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
           boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 35px rgba(21, 144, 151, 0.25)',
         }}
       >
-        {/* Subtle Ambient Backlight Glow */}
         <div 
           className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 rounded-full blur-3xl pointer-events-none opacity-40"
           style={{ backgroundColor: '#159097' }}
         />
 
-        {/* Back Button Navigation & Centered Badge */}
         <div className="relative flex items-center justify-center mb-4 min-h-[40px]">
           <button
             id="register-back-btn"
+            type="button"
             onClick={onBack}
             className="absolute left-0 p-2 -ml-2 text-slate-300 hover:text-white transition-colors cursor-pointer rounded-full hover:bg-white/5 z-10"
           >
@@ -183,7 +198,6 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
           </span>
         </div>
 
-        {/* Header: 🎮 REGISTER */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2.5 mb-1.5">
             <Gamepad2 
@@ -199,7 +213,6 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
           </p>
         </div>
 
-        {/* Error message alert */}
         {errorMsg && (
           <div className="mb-5 p-3.5 rounded-2xl bg-rose-950/60 border border-rose-800/70 text-rose-200 text-xs font-medium flex items-center gap-2.5">
             <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
@@ -207,103 +220,91 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
           </div>
         )}
 
-        {/* Form Container */}
         <form onSubmit={handleSubmit} className="space-y-3.5">
-          
-          {/* First Name */}
-          <div>
-            <input
-              id="register-first-name"
-              type="text"
-              placeholder="First Name"
-              value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-              className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
-              style={{
-                backgroundColor: 'rgba(26, 86, 120, 0.4)',
-                borderColor: formData.firstName ? '#159097' : 'rgba(21, 144, 151, 0.5)',
-              }}
-              required
-            />
-          </div>
+          <input
+            id="register-first-name"
+            name="firstName"
+            type="text"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
+            style={{
+              ...inputStyle,
+              borderColor: formData.firstName ? '#159097' : inputStyle.borderColor,
+            }}
+            required
+          />
 
-          {/* Last Name */}
-          <div>
-            <input
-              id="register-last-name"
-              type="text"
-              placeholder="Last Name"
-              value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-              className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
-              style={{
-                backgroundColor: 'rgba(26, 86, 120, 0.4)',
-                borderColor: formData.lastName ? '#159097' : 'rgba(21, 144, 151, 0.5)',
-              }}
-              required
-            />
-          </div>
+          <input
+            id="register-last-name"
+            name="lastName"
+            type="text"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
+            style={{
+              ...inputStyle,
+              borderColor: formData.lastName ? '#159097' : inputStyle.borderColor,
+            }}
+            required
+          />
 
-          {/* Username / Call Sign (Optional) */}
-          <div>
-            <input
-              id="register-username"
-              type="text"
-              placeholder="Call Sign / Username (e.g. cadet_alex) - Optional"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
-              style={{
-                backgroundColor: 'rgba(26, 86, 120, 0.4)',
-                borderColor: formData.username ? '#159097' : 'rgba(21, 144, 151, 0.5)',
-              }}
-            />
-          </div>
+          <input
+            id="register-username"
+            name="username"
+            type="text"
+            placeholder="Call Sign / Username (e.g. cadet_alex) - Optional"
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
+            style={{
+              ...inputStyle,
+              borderColor: formData.username ? '#159097' : inputStyle.borderColor,
+            }}
+          />
 
-          {/* Email Address */}
-          <div>
-            <input
-              id="register-email"
-              type="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
-              style={{
-                backgroundColor: 'rgba(26, 86, 120, 0.4)',
-                borderColor: formData.email ? '#159097' : 'rgba(21, 144, 151, 0.5)',
-              }}
-              required
-            />
-          </div>
+          <input
+            id="register-email"
+            name="email"
+            type="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
+            style={{
+              ...inputStyle,
+              borderColor: formData.email ? '#159097' : inputStyle.borderColor,
+            }}
+            required
+          />
 
-          {/* Phone No. */}
-          <div>
-            <input
-              id="register-phone"
-              type="tel"
-              placeholder="Phone No."
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
-              style={{
-                backgroundColor: 'rgba(26, 86, 120, 0.4)',
-                borderColor: formData.phone ? '#159097' : 'rgba(21, 144, 151, 0.5)',
-              }}
-              required
-            />
-          </div>
+          <input
+            id="register-phone"
+            name="phone"
+            type="tel"
+            placeholder="Phone No."
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none"
+            style={{
+              ...inputStyle,
+              borderColor: formData.phone ? '#159097' : inputStyle.borderColor,
+            }}
+            required
+          />
 
-          {/* Select College */}
           <div className="relative">
             <select
               id="register-college"
+              name="college"
               value={formData.college}
-              onChange={(e) => setFormData({ ...formData, college: e.target.value })}
+              onChange={handleChange}
               className="w-full px-4 py-3.5 rounded-2xl border text-white text-sm font-chakra appearance-none outline-none cursor-pointer pr-10"
-              style={{ backgroundColor: 'rgba(26, 86, 120, 0.4)', borderColor: 'rgba(21, 144, 151, 0.5)' }}
+              style={inputStyle}
             >
-              {colleges.map((col) => (
+              {COLLEGES.map((col) => (
                 <option key={col} value={col} className="bg-[#25245d] text-white">
                   {col}
                 </option>
@@ -314,16 +315,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             </div>
           </div>
 
-          {/* Select Year */}
           <div className="relative">
             <select
               id="register-year"
+              name="year"
               value={formData.year}
-              onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+              onChange={handleChange}
               className="w-full px-4 py-3.5 rounded-2xl border text-white text-sm font-chakra appearance-none outline-none cursor-pointer pr-10"
-              style={{ backgroundColor: 'rgba(26, 86, 120, 0.4)', borderColor: 'rgba(21, 144, 151, 0.5)' }}
+              style={inputStyle}
             >
-              {years.map((y) => (
+              {ACADEMIC_YEARS.map((y) => (
                 <option key={y} value={y} className="bg-[#25245d] text-white">
                   {y}
                 </option>
@@ -334,16 +335,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             </div>
           </div>
 
-          {/* Password */}
           <div className="relative">
             <input
               id="register-password"
+              name="password"
               type={showPassword ? 'text' : 'password'}
               placeholder="Password"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={handleChange}
               className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none pr-11"
-              style={{ backgroundColor: 'rgba(26, 86, 120, 0.4)', borderColor: 'rgba(21, 144, 151, 0.5)' }}
+              style={inputStyle}
               required
             />
             <button
@@ -355,16 +356,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             </button>
           </div>
 
-          {/* Confirm Password */}
           <div className="relative">
             <input
               id="register-confirm-password"
+              name="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Confirm Password"
               value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              onChange={handleChange}
               className="w-full px-4 py-3.5 rounded-2xl border text-white placeholder:text-slate-400 text-sm font-chakra transition-all outline-none pr-11"
-              style={{ backgroundColor: 'rgba(26, 86, 120, 0.4)', borderColor: 'rgba(21, 144, 151, 0.5)' }}
+              style={inputStyle}
               required
             />
             <button
@@ -376,8 +377,10 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             </button>
           </div>
 
-          {/* reCAPTCHA Widget */}
-          <div className="p-3.5 rounded-2xl border flex items-center justify-between select-none" style={{ backgroundColor: 'rgba(26, 86, 120, 0.35)', borderColor: 'rgba(21, 144, 151, 0.4)' }}>
+          <div 
+            className="p-3.5 rounded-2xl border flex items-center justify-between select-none" 
+            style={{ backgroundColor: 'rgba(26, 86, 120, 0.35)', borderColor: 'rgba(21, 144, 151, 0.4)' }}
+          >
             <div 
               onClick={handleCaptchaClick}
               className="flex items-center gap-3 cursor-pointer"
@@ -406,19 +409,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
 
             <div className="flex flex-col items-center justify-center text-[10px]" style={{ color: '#38a48c' }}>
               <div className="w-6 h-6 flex items-center justify-center mb-0.5" style={{ color: '#38a48c' }}>
-                <svg viewBox="0 0 48 48" className="w-5 h-5 fill-current">
-                  <path d="M24 8V2l-8 8 8 8v-6c6.63 0 12 5.37 12 12 0 2.03-.51 3.93-1.39 5.61l2.94 2.94C39.06 29.83 40 27.02 40 24c0-8.84-7.16-16-16-16zm-8 22c0-2.03.51-3.93 1.39-5.61l-2.94-2.94C12.94 18.17 12 20.98 12 24c0 8.84 7.16 16 16 16v6l8-8-8-8v6c-6.63 0-12-5.37-12-12z"/>
-                </svg>
+                <RecaptchaIcon />
               </div>
               <span className="tracking-tight text-[9px]">reCAPTCHA</span>
             </div>
           </div>
 
-          {/* Sign Up Button */}
           <button
             id="register-submit-btn"
             type="submit"
-            className="w-full py-4 rounded-full font-orbitron font-extrabold text-sm sm:text-base tracking-wider uppercase shadow-2xl transition-all hover:scale-102 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-4 rounded-full font-orbitron font-extrabold text-sm sm:text-base tracking-wider uppercase shadow-2xl transition-all hover:scale-[1.02] flex items-center justify-center gap-2 cursor-pointer"
             style={{
               backgroundColor: '#f8d092',
               color: '#25245d',
@@ -429,7 +429,6 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             <span>SIGN UP / TRANSMIT CADET DATA</span>
           </button>
 
-          {/* Already have an account? LOGIN Link */}
           <div className="text-center pt-2">
             <p className="text-sm font-chakra" style={{ color: '#d8e8ea' }}>
               Already have an alien access terminal?{' '}
@@ -444,11 +443,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
               </button>
             </p>
           </div>
-
         </form>
-
       </div>
     </div>
   );
 };
-

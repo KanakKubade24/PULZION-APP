@@ -1,29 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   ShieldCheck, 
   Info, 
-  Building2, 
   FileText, 
-  PhoneCall, 
-  MapPin,
-  Mail,
-  Award
+  MapPin
 } from 'lucide-react';
 import { APP_CONFIG } from '../theme/designSystem';
+
+type TabType = 'about' | 'rules' | 'privacy' | 'contact';
 
 interface InfoPagesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialTab?: 'about' | 'rules' | 'privacy' | 'contact';
+  initialTab?: TabType;
 }
+
+interface TabConfig {
+  id: TabType;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const TABS: TabConfig[] = [
+  { id: 'about', label: 'About Symposium', icon: Info },
+  { id: 'rules', label: 'Rules & Code of Conduct', icon: ShieldCheck },
+  { id: 'contact', label: 'Help Desk & Venue', icon: MapPin },
+  { id: 'privacy', label: 'Privacy & Terms', icon: FileText },
+];
 
 export const InfoPagesModal: React.FC<InfoPagesModalProps> = ({
   isOpen,
   onClose,
   initialTab = 'about',
 }) => {
-  const [activeTab, setActiveTab] = useState<'about' | 'rules' | 'privacy' | 'contact'>(initialTab);
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   if (!isOpen) return null;
 
@@ -54,8 +69,10 @@ export const InfoPagesModal: React.FC<InfoPagesModalProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -63,17 +80,13 @@ export const InfoPagesModal: React.FC<InfoPagesModalProps> = ({
 
         {/* Tab Navigation */}
         <div className="px-4 py-2 bg-black/50 border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-          {[
-            { id: 'about', label: 'About Symposium', icon: Info },
-            { id: 'rules', label: 'Rules & Code of Conduct', icon: ShieldCheck },
-            { id: 'contact', label: 'Help Desk & Venue', icon: PhoneCall },
-            { id: 'privacy', label: 'Privacy & Terms', icon: FileText },
-          ].map((tab) => {
+          {TABS.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-chakra font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeTab === tab.id
                     ? 'bg-[#f8d092] text-[#050716]'
@@ -216,6 +229,7 @@ export const InfoPagesModal: React.FC<InfoPagesModalProps> = ({
             {APP_CONFIG.organization} // REGULATORY PORTAL
           </span>
           <button
+            type="button"
             onClick={onClose}
             className="px-5 py-1.5 rounded-xl font-orbitron font-bold text-xs bg-[#f8d092] text-[#050716] hover:bg-white transition-all cursor-pointer"
           >

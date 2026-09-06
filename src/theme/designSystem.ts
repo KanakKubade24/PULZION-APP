@@ -34,7 +34,7 @@ export interface DesignSystemConfig {
 
 export const APP_CONFIG: DesignSystemConfig = {
   // [MY APP NAME]
-  appName: "PULZION '26",
+  appName: 'PULZION',
   appShortName: 'PULZION',
   appEdition: "'26",
   tagline: 'Beyond The Earth - Galactic Technology & Autonomous Innovation Symposium',

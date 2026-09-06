@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { EventItem } from '../types';
 import { EVENTS_DATA } from '../data/eventsData';
 
@@ -34,7 +34,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [cartItemIds, setCartItemIds] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
@@ -50,7 +52,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Sync with localStorage
+  // Sync to localStorage
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItemIds));
@@ -71,73 +73,81 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [appliedCoupon]);
 
-  const cartEvents = cartItemIds
-    .map((id) => EVENTS_DATA.find((e) => e.id === id))
-    .filter((e): e is EventItem => Boolean(e));
+  // Derivations & Calculations
+  const cartEvents = useMemo(() => {
+    return cartItemIds
+      .map((id) => EVENTS_DATA.find((e) => e.id === id))
+      .filter((e): e is EventItem => Boolean(e));
+  }, [cartItemIds]);
 
   const cartCount = cartItemIds.length;
 
-  const subtotal = cartEvents.reduce((sum, item) => sum + item.entryFee, 0);
+  const subtotal = useMemo(() => {
+    return cartEvents.reduce((sum, item) => sum + item.entryFee, 0);
+  }, [cartEvents]);
 
   // Multi-event combo discount: 2 events = 10%, 3+ events = 15%
-  let comboDiscountPercent = 0;
-  if (cartCount >= 3) {
-    comboDiscountPercent = 15;
-  } else if (cartCount >= 2) {
-    comboDiscountPercent = 10;
-  }
+  const comboDiscountPercent = useMemo(() => {
+    if (cartCount >= 3) return 15;
+    if (cartCount >= 2) return 10;
+    return 0;
+  }, [cartCount]);
 
   // Coupon discount
-  let couponDiscountPercent = 0;
-  if (appliedCoupon) {
+  const couponDiscountPercent = useMemo(() => {
+    if (!appliedCoupon) return 0;
     const code = appliedCoupon.toUpperCase().trim();
-    if (code === 'PULZION26' || code === 'PULZION2026') {
-      couponDiscountPercent = 20;
-    } else if (code === 'SQUADPASS' || code === 'CADET15') {
-      couponDiscountPercent = 15;
-    } else if (code === 'EARLYBIRD' || code === 'PASC10') {
-      couponDiscountPercent = 10;
-    }
-  }
+    if (code === 'PULZION26' || code === 'PULZION2026') return 20;
+    if (code === 'SQUADPASS' || code === 'CADET15') return 15;
+    if (code === 'EARLYBIRD' || code === 'PASC10') return 10;
+    return 0;
+  }, [appliedCoupon]);
 
-  // Combine discounts (cap max discount at 35%)
-  const totalDiscountPercent = Math.min(comboDiscountPercent + couponDiscountPercent, 35);
-  const discountAmount = Math.round((subtotal * totalDiscountPercent) / 100);
-  const finalTotal = Math.max(0, subtotal - discountAmount);
+  // Combined totals capped at 35%
+  const { discountAmount, finalTotal } = useMemo(() => {
+    const totalDiscountPercent = Math.min(comboDiscountPercent + couponDiscountPercent, 35);
+    const discount = Math.round((subtotal * totalDiscountPercent) / 100);
+    const total = Math.max(0, subtotal - discount);
+    return { discountAmount: discount, finalTotal: total };
+  }, [subtotal, comboDiscountPercent, couponDiscountPercent]);
 
-  const addToCart = (eventId: string): boolean => {
-    if (!cartItemIds.includes(eventId)) {
-      setCartItemIds((prev) => [...prev, eventId]);
-      return true;
-    }
-    return false;
-  };
+  // Handler Functions
+  const addToCart = useCallback((eventId: string): boolean => {
+    let added = false;
+    setCartItemIds((prev) => {
+      if (!prev.includes(eventId)) {
+        added = true;
+        return [...prev, eventId];
+      }
+      return prev;
+    });
+    return added;
+  }, []);
 
-  const removeFromCart = (eventId: string) => {
+  const removeFromCart = useCallback((eventId: string) => {
     setCartItemIds((prev) => prev.filter((id) => id !== eventId));
-  };
+  }, []);
 
-  const toggleCartItem = (eventId: string) => {
-    if (cartItemIds.includes(eventId)) {
-      removeFromCart(eventId);
-    } else {
-      addToCart(eventId);
-    }
-  };
+  const toggleCartItem = useCallback((eventId: string) => {
+    setCartItemIds((prev) =>
+      prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]
+    );
+  }, []);
 
-  const isInCart = (eventId: string): boolean => {
-    return cartItemIds.includes(eventId);
-  };
+  const isInCart = useCallback(
+    (eventId: string): boolean => cartItemIds.includes(eventId),
+    [cartItemIds]
+  );
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItemIds([]);
     setAppliedCoupon(null);
-  };
+  }, []);
 
-  const openCart = () => setIsCartOpen(true);
-  const closeCart = () => setIsCartOpen(false);
+  const openCart = useCallback(() => setIsCartOpen(true), []);
+  const closeCart = useCallback(() => setIsCartOpen(false), []);
 
-  const applyCoupon = (code: string): { success: boolean; message: string } => {
+  const applyCoupon = useCallback((code: string): { success: boolean; message: string } => {
     const cleanCode = code.toUpperCase().trim();
     if (!cleanCode) {
       return { success: false, message: 'Please enter a valid mission pass code' };
@@ -155,40 +165,60 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } else {
       return { success: false, message: 'Invalid transmission code. Try PULZION26 or SQUADPASS.' };
     }
-  };
+  }, []);
 
-  const removeCoupon = () => {
+  const removeCoupon = useCallback(() => {
     setAppliedCoupon(null);
-  };
+  }, []);
 
-  return (
-    <CartContext.Provider
-      value={{
-        cartItemIds,
-        cartEvents,
-        cartCount,
-        subtotal,
-        discountAmount,
-        finalTotal,
-        appliedCoupon,
-        couponDiscountPercent,
-        comboDiscountPercent,
-        isCartOpen,
-        setIsCartOpen,
-        openCart,
-        closeCart,
-        addToCart,
-        removeFromCart,
-        toggleCartItem,
-        isInCart,
-        clearCart,
-        applyCoupon,
-        removeCoupon,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  // Memoized Context Value
+  const contextValue = useMemo(
+    () => ({
+      cartItemIds,
+      cartEvents,
+      cartCount,
+      subtotal,
+      discountAmount,
+      finalTotal,
+      appliedCoupon,
+      couponDiscountPercent,
+      comboDiscountPercent,
+      isCartOpen,
+      setIsCartOpen,
+      openCart,
+      closeCart,
+      addToCart,
+      removeFromCart,
+      toggleCartItem,
+      isInCart,
+      clearCart,
+      applyCoupon,
+      removeCoupon,
+    }),
+    [
+      cartItemIds,
+      cartEvents,
+      cartCount,
+      subtotal,
+      discountAmount,
+      finalTotal,
+      appliedCoupon,
+      couponDiscountPercent,
+      comboDiscountPercent,
+      isCartOpen,
+      openCart,
+      closeCart,
+      addToCart,
+      removeFromCart,
+      toggleCartItem,
+      isInCart,
+      clearCart,
+      applyCoupon,
+      removeCoupon,
+    ]
   );
+
+  return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
 };
 
 export const useCart = (): CartContextType => {
